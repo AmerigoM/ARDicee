@@ -12,6 +12,7 @@ import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
 
+    // Link to the AR Scene view
     @IBOutlet var sceneView: ARSCNView!
     
     override func viewDidLoad() {
@@ -20,14 +21,36 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the view's delegate
         sceneView.delegate = self
         
-        // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
+        // create a cube (10 cm each side)
+        let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01)
+        
+        // create a material
+        let material = SCNMaterial()
+        
+        // change it's diffuse color
+        material.diffuse.contents = UIColor.red
+        
+        // add the material to the cube (you could add more to have metallic or specific effects)
+        cube.materials = [material]
+        
+        // create a node, which is a position in the 3D space
+        let node = SCNNode()
+        node.position = SCNVector3(x: 0, y: 0.1, z: -0.5)
+        
+        // set a position to the cube
+        node.geometry = cube
+        
+        // put the node in the sceneView
+        sceneView.scene.rootNode.addChildNode(node)
+        
+        // enable lights in the scene
+        sceneView.autoenablesDefaultLighting = true
         
         // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        // let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
         // Set the scene to the view
-        sceneView.scene = scene
+        // sceneView.scene = scene
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -47,29 +70,4 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.session.pause()
     }
 
-    // MARK: - ARSCNViewDelegate
-    
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
-    }
-*/
-    
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
-        
-    }
-    
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
-        
-    }
 }
