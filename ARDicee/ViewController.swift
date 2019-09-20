@@ -22,35 +22,40 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.delegate = self
         
         // create a sphere
-        let sphere = SCNSphere(radius: 0.2)
+        // let sphere = SCNSphere(radius: 0.2)
         
         // create a material
-        let material = SCNMaterial()
+        // let material = SCNMaterial()
         
         // change it's diffuse color
-        material.diffuse.contents = UIImage(named: "art.scnassets/moon_texture.jpg")
+        // material.diffuse.contents = UIImage(named: "art.scnassets/moon_texture.jpg")
         
         // add the material to the cube (you could add more to have metallic or specific effects)
-        sphere.materials = [material]
+        // sphere.materials = [material]
         
         // create a node, which is a position in the 3D space
-        let node = SCNNode()
-        node.position = SCNVector3(x: 0, y: 0.1, z: -0.5)
+        // let node = SCNNode()
+        // node.position = SCNVector3(x: 0, y: 0.1, z: -0.5)
         
         // set a position to the sphere
-        node.geometry = sphere
+        // node.geometry = sphere
         
         // put the node in the sceneView
-        sceneView.scene.rootNode.addChildNode(node)
+        // sceneView.scene.rootNode.addChildNode(node)
         
         // enable lights in the scene
         sceneView.autoenablesDefaultLighting = true
         
         // Create a new scene
-        // let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
         
-        // Set the scene to the view
-        // sceneView.scene = scene
+        // search for a node in a certain scene and include all its subnodes (there's any at the moment)
+        if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true) {
+            diceNode.position = SCNVector3(x: 0, y: 0, z: -0.1)
+            
+            // Set the scene to the view
+            sceneView.scene.rootNode.addChildNode(diceNode)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
