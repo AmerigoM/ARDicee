@@ -133,9 +133,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             
             // if we found a position on an existin plane...
             if !results.isEmpty {
-                
+                print("hit plane")
             } else {
-                
+                print("hit somewhere else")
             }
         }
     }
