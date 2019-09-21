@@ -11,8 +11,11 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
+    
+    // every new dice note will be stored in the following array
+    var diceArray = [SCNNode]()
 
-    // Link to the AR Scene view
+    // link to the AR Scene view
     @IBOutlet var sceneView: ARSCNView!
     
     override func viewDidLoad() {
@@ -134,26 +137,55 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                         y: hitResult.worldTransform.columns.3.y + diceNode.boundingSphere.radius,
                         z: hitResult.worldTransform.columns.3.z
                     )
-        
+                    
+                    // append the node to the diceArray
+                    diceArray.append(diceNode)
+
                     // set the scene to the view
                     sceneView.scene.rootNode.addChildNode(diceNode)
                     
-                    // create a random number between 1 to four (there are four faces on the X axis)
-                    // and multiply it by half pi (when the dice shows us a face)
-                    let randomX = Float((arc4random_uniform(4) + 1)) * (Float.pi/2)
-                    let randomZ = Float((arc4random_uniform(4) + 1)) * (Float.pi/2)
-                    
-                    // animate the dice
-                    diceNode.runAction(
-                        SCNAction.rotateBy(
-                            x: CGFloat(randomX * 5),
-                            y: 0,
-                            z: CGFloat(randomZ * 5),
-                            duration: 0.5)
-                    )
+                    roll(dice: diceNode)
+
                 }
             }
         }
     }
+    
+    // MARK: - ROLL METHODS
+    
+    // function to roll all the dices of the scene at once
+    func rollAll() {
+        if !diceArray.isEmpty {
+            for dice in diceArray {
+                roll(dice: dice)
+            }
+        }
+    }
+    
+    // function to roll a single dice
+    func roll(dice: SCNNode) {
+        // create a random number between 1 to four (there are four faces on the X axis)
+        // and multiply it by half pi (when the dice shows us a face)
+        let randomX = Float((arc4random_uniform(4) + 1)) * (Float.pi/2)
+        let randomZ = Float((arc4random_uniform(4) + 1)) * (Float.pi/2)
+        
+        // animate the dice
+        dice.runAction(
+            SCNAction.rotateBy(
+                x: CGFloat(randomX * 5),
+                y: 0,
+                z: CGFloat(randomZ * 5),
+                duration: 0.5)
+        )
+    }
 
+    // MARK: - BUTTONS AND SHAKING ACTION
+    
+    @IBAction func rollAgain(_ sender: UIBarButtonItem) {
+        rollAll()
+    }
+    
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        rollAll()
+    }
 }
