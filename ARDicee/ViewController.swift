@@ -48,17 +48,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // enable lights in the scene
         sceneView.autoenablesDefaultLighting = true
-        
-//        // Create a new scene
-//        let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
-//
-//        // search for a node in a certain scene and include all its subnodes (there's any at the moment)
-//        if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true) {
-//            diceNode.position = SCNVector3(x: 0, y: 0, z: -0.1)
-//
-//            // Set the scene to the view
-//            sceneView.scene.rootNode.addChildNode(diceNode)
-//        }
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -132,10 +122,22 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             let results = sceneView.hitTest(touchLocation, types: .existingPlaneUsingExtent)
             
             // if we found a position on an existin plane...
-            if !results.isEmpty {
-                print("hit plane")
-            } else {
-                print("hit somewhere else")
+            if let hitResult = results.first {
+                // Create a dice scene
+                let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
+        
+                // search for a node in a certain scene and include all its subnodes
+                if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true) {
+                    // add a position based on the coordinates we converted
+                    diceNode.position = SCNVector3(
+                        x: hitResult.worldTransform.columns.3.x,
+                        y: hitResult.worldTransform.columns.3.y + diceNode.boundingSphere.radius,
+                        z: hitResult.worldTransform.columns.3.z
+                    )
+        
+                    // set the scene to the view
+                    sceneView.scene.rootNode.addChildNode(diceNode)
+                }
             }
         }
     }
