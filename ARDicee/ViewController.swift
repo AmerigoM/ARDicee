@@ -137,6 +137,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
                     // set the scene to the view
                     sceneView.scene.rootNode.addChildNode(diceNode)
+                    
+                    // create a random number between 1 to four (there are four faces on the X axis)
+                    // and multiply it by half pi (when the dice shows us a face)
+                    let randomX = Float((arc4random_uniform(4) + 1)) * (Float.pi/2)
+                    let randomZ = Float((arc4random_uniform(4) + 1)) * (Float.pi/2)
+                    
+                    // animate the dice
+                    diceNode.runAction(
+                        SCNAction.rotateBy(
+                            x: CGFloat(randomX * 5),
+                            y: 0,
+                            z: CGFloat(randomZ * 5),
+                            duration: 0.5)
+                    )
                 }
             }
         }
