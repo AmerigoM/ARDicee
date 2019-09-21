@@ -98,7 +98,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             let planeNode = SCNNode()
             planeNode.position = SCNVector3(x: planeAnchor.center.x, y: 0, z: planeAnchor.center.z)
             
-            // planes are vertical by default so we have to rotate it by 90 degrees
+            // SCNPlanes are created vertically by default so we have to rotate our by 90 degrees
             planeNode.transform = SCNMatrix4MakeRotation(-Float.pi/2, 1, 0, 0)
             
             // grate a new texture material
@@ -111,11 +111,32 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             // set the node geometry to the plane in order to make it appear in the scene
             planeNode.geometry = plane
             
-            // add the child node into the root node: the parameter node is a blank node that
-            // got created when a new surface was detected
+            // add the child node into the root node: the parameter "node" of the render
+            // function is a blank node that got created when a new surface was detected
             node.addChildNode(planeNode)
         } else {
             return
+        }
+    }
+    
+    // a touch is detected in the view or in the window
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // if there was a touch indeed and this method wasn't called by error
+        if let touch = touches.first {
+            // where the touch was detected in our scene
+            let touchLocation = touch.location(in: sceneView)
+            
+            // convert the 2D touch coordinates into the corresponding 3D coordinates for
+            // manipulating the scene: searches for real-world objects or AR anchors
+            // in the captured camera image corresponding to a point in the SceneKit view
+            let results = sceneView.hitTest(touchLocation, types: .existingPlaneUsingExtent)
+            
+            // if we found a position on an existin plane...
+            if !results.isEmpty {
+                
+            } else {
+                
+            }
         }
     }
 
