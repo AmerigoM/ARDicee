@@ -18,36 +18,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     // link to the AR Scene view
     @IBOutlet var sceneView: ARSCNView!
     
+    // MARK: - LIFECYCLE METHODS
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // debug mode to show feature points
-        self.sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
+        // self.sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
         
         // Set the view's delegate
         sceneView.delegate = self
-        
-        // create a sphere
-        // let sphere = SCNSphere(radius: 0.2)
-        
-        // create a material
-        // let material = SCNMaterial()
-        
-        // change it's diffuse color
-        // material.diffuse.contents = UIImage(named: "art.scnassets/moon_texture.jpg")
-        
-        // add the material to the cube (you could add more to have metallic or specific effects)
-        // sphere.materials = [material]
-        
-        // create a node, which is a position in the 3D space
-        // let node = SCNNode()
-        // node.position = SCNVector3(x: 0, y: 0.1, z: -0.5)
-        
-        // set a position to the sphere
-        // node.geometry = sphere
-        
-        // put the node in the sceneView
-        // sceneView.scene.rootNode.addChildNode(node)
         
         // enable lights in the scene
         sceneView.autoenablesDefaultLighting = true
@@ -126,39 +106,35 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             
             // if we found a position on an existin plane...
             if let hitResult = results.first {
-                // Create a dice scene
-                let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
-        
-                // search for a node in a certain scene and include all its subnodes
-                if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true) {
-                    // add a position based on the coordinates we converted
-                    diceNode.position = SCNVector3(
-                        x: hitResult.worldTransform.columns.3.x,
-                        y: hitResult.worldTransform.columns.3.y + diceNode.boundingSphere.radius,
-                        z: hitResult.worldTransform.columns.3.z
-                    )
-                    
-                    // append the node to the diceArray
-                    diceArray.append(diceNode)
-
-                    // set the scene to the view
-                    sceneView.scene.rootNode.addChildNode(diceNode)
-                    
-                    roll(dice: diceNode)
-
-                }
+                addDice(atLocation: hitResult)
             }
         }
     }
     
-    // MARK: - ROLL METHODS
+    // MARK: - HELPER METHODS
     
-    // function to roll all the dices of the scene at once
-    func rollAll() {
-        if !diceArray.isEmpty {
-            for dice in diceArray {
-                roll(dice: dice)
-            }
+    // function to add a dice to the scene
+    func addDice(atLocation location: ARHitTestResult) {
+        // Create a dice scene
+        let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
+
+        // search for a node in a certain scene and include all its subnodes
+        if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true) {
+            // add a position based on the coordinates we converted
+            diceNode.position = SCNVector3(
+                x: location.worldTransform.columns.3.x,
+                y: location.worldTransform.columns.3.y + diceNode.boundingSphere.radius,
+                z: location.worldTransform.columns.3.z
+            )
+            
+            // append the node to the diceArray
+            diceArray.append(diceNode)
+
+            // set the scene to the view
+            sceneView.scene.rootNode.addChildNode(diceNode)
+            
+            roll(dice: diceNode)
+
         }
     }
     
@@ -177,6 +153,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 z: CGFloat(randomZ * 5),
                 duration: 0.5)
         )
+    }
+    
+    // function to roll all the dices of the scene at once
+    func rollAll() {
+        if !diceArray.isEmpty {
+            for dice in diceArray {
+                roll(dice: dice)
+            }
+        }
     }
 
     // MARK: - BUTTONS AND SHAKING ACTION
